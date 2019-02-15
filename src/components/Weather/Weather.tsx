@@ -100,11 +100,11 @@ async function getWeatherData(coords: Coordinates) {
 
   return {
     weather: await getJson(
-      `http://api.openweathermap.org/data/2.5/weather?`,
+      `https://api.openweathermap.org/data/2.5/weather?`,
       data,
     ),
     forecast: await getJson(
-      `http://api.openweathermap.org/data/2.5/forecast?`,
+      `https://api.openweathermap.org/data/2.5/forecast?`,
       data,
     ),
   };
