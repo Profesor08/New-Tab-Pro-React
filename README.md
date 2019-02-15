@@ -2,6 +2,8 @@
 
 New Tab Page for Google Chrome
 
+[DEMO](https://profesor08.github.io/New-Tab-Pro-React/)
+
 Features:
 
 - Fast links to favorite websites
