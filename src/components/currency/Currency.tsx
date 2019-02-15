@@ -53,7 +53,7 @@ async function getCurrencyInfo() {
     currencies: baseCurrency + "," + currencyVolutes.join(","),
   };
 
-  const url = `https://e-webdev.ru/ajax-cors/?url=http://www.apilayer.net/api/live&`;
+  const url = `http://www.apilayer.net/api/live?`;
 
   return await getJson(url, params);
 }
