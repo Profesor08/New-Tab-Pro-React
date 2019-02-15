@@ -1,0 +1,42 @@
+.options-bar {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 10px;
+  user-select: none;
+  z-index: 100;
+}
+
+.option-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 100%;
+  width: var(--options-button-size);
+  height: var(--options-button-size);
+  background-color: var(--options-background-color);
+  border: 2px solid var(--options-border-color);
+  border-radius: var(--options-border-radius);
+  color: var(--options-button-color);
+  transition: ease all .2s;
+
+  &:hover {
+    cursor: pointer;
+    width: var(--options-hover-button-size);
+    height: var(--options-hover-button-size);
+    border-radius: var(--options-hover-border-radius);
+    border-color: var(--options-hover-border-color);
+    background-color: var(--options-hover-background-color);
+
+    .icon {
+      color: var(--options-hover-button-color);
+    }
+  }
+
+  .icon {
+    font-style: normal;
+    transition: ease color .2s;
+  }
+}

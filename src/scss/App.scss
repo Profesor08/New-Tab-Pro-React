@@ -1,0 +1,94 @@
+//@import "../../node_modules/bootstrap/scss/bootstrap-grid";
+
+:root {
+  --main-border-color: rgba(255, 51, 0, 0.2);
+  --main-hover-border-color: #4B7BEF;
+  --main-hover-text-color: #4B7BEF;
+
+  --animation-speed: .3s;
+
+  --options-button-size: 30px;
+  --options-button-color: white;
+  --options-background-color: #343434;
+  --options-border-color: var(--main-border-color);
+  --options-border-radius: 50%;
+  --options-hover-button-size: 30px;
+  --options-hover-button-color: var(--main-hover-text-color);
+  --options-hover-background-color: #444444;
+  --options-hover-border-color: var(--main-hover-border-color);
+  --options-hover-border-radius: 50%;
+
+  --options-panel-background: #343434;
+  --options-panel-border-color: var(--main-border-color);
+  --options-panel-color: white;
+
+  --site-border-color: rgba(119, 14, 168, 0.37);
+  --site-background-color: rgba(11, 16, 45, 0.4);
+  --site-name-color: rgba(200, 200, 200, 1);
+  --site-add-button-icon-color: rgba(119, 14, 168, 1);
+  --site-hover-border-color: rgba(255, 14, 168, 0.37);
+  --site-hover-background-color: rgba(255, 255, 255, 0.08);
+  --site-hover-name-color: rgba(255, 255, 255, 1);
+  --site-active-border-color: rgba(255, 14, 168, 0.37);
+  --site-active-background-color: rgba(255, 255, 255, 0.1);
+  --site-active-name-color: rgba(255, 255, 255, 1);
+}
+
+@import "templates/form";
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #1e1e1e;
+  font-family: "Calisto MT", sans-serif;
+  font-size: 16px;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+.App {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.main-layout {
+  display: flex;
+}
+
+.sidebar-left {
+  width: 340px;
+  flex: 0 0 340px;
+  padding: 0 15px;
+}
+
+.sidebar-right {
+  width: 340px;
+  flex: 0 0 340px;
+  padding: 0 15px;
+
+  @media (max-width: 1600px) {
+    width: auto;
+    flex: 1 1 auto;
+    max-width: 340px;
+  }
+
+  @media (max-width: 1000px) {
+    //width: 0;
+    //flex: 0;
+  }
+}
+
+.main-container {
+  flex: 1 1 auto;
+  padding: 0 15px;
+  position: relative;
+}

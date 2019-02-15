@@ -1,0 +1,121 @@
+.options-panel-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 200;
+
+  &.is-active {
+    .options-panel {
+      opacity: 1;
+      transform: translate(50px, 0);
+    }
+
+    .options-back {
+      width: 100vw;
+      height: 100vh;
+    }
+  }
+
+  .options-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+.options-panel {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  transform: translate(-100%, 0);
+  z-index: 9999;
+  opacity: 0;
+  transition: ease opacity .3s, ease transform .3s;
+
+  background-color: var(--options-panel-background);
+  border: 2px solid var(--options-panel-border-color);
+  color: var(--options-panel-color);
+
+  height: 200px;
+
+  display: flex;
+  flex-direction: column;
+
+  .close-button {
+    width: 20px;
+    height: 20px;
+    color: grey;
+    font-size: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: ease color var(--animation-speed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      cursor: pointer;
+      color: red;
+    }
+  }
+
+  .options-buttons {
+    margin-top: auto;
+  }
+
+  .options-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 5px;
+    border-top: 1px solid #434343;
+    font-size: .8rem;
+    background-color: transparent;
+    transition: ease background-color var(--animation-speed);
+    white-space: nowrap;
+
+    &:hover {
+      background-color: #434343;
+      cursor: pointer;
+
+      .button-text {
+        padding: 0 25px 0 5px;
+      }
+    }
+
+    &.is-active {
+      .check-icon {
+        color: green;
+
+        &:before {
+          content: "☑";
+        }
+      }
+    }
+
+    input {
+      display: none;
+    }
+
+    .button-text {
+      transition: ease padding var(--animation-speed);
+      padding: 0 30px 0 0;
+    }
+
+    .check-icon {
+      color: grey;
+      font-size: 16px;
+      line-height: 100%;
+      transition: ease color var(--animation-speed);
+
+      &:before {
+        content: "☐";
+      }
+    }
+  }
+}

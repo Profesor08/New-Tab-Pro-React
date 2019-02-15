@@ -1,0 +1,67 @@
+.currency {
+  margin: 200px 20px 0 40px;
+  color: white;
+
+  .currency-header {
+    display: flex;
+    margin-bottom: 5px;
+
+    .title, .selected, .rate {
+      font-size: .8rem;
+      font-weight: bold;
+
+      &:not(:last-child) {
+        margin-right: 5px;
+      }
+    }
+
+    .title {
+      flex: 1 0 40%;
+    }
+
+    .selected, .rate {
+      flex: 1 0 calc(60% / 2);
+    }
+  }
+
+  .currency-row {
+    display: flex;
+    margin: 0;
+
+    .nominal, .result, .value {
+      font-size: .8rem;
+      display: flex;
+      align-items: center;
+
+      &:not(:last-child) {
+        margin-right: 5px;
+      }
+    }
+
+    .nominal {
+      flex: 1 0 40%;
+
+      .name {
+        flex: 0 0 30px;
+        white-space: nowrap;
+        margin-right: 5px;
+      }
+    }
+
+    .result, .value {
+      flex: 1 0 calc(60% / 2);
+    }
+  }
+
+  input {
+    display: inline;
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+    background-color: transparent;
+    border: 0;
+    outline: none;
+    color: white;
+  }
+
+}
