@@ -3,6 +3,7 @@ export const SET_SEARCH_QUERY = "SET_SEARCH_QUERY";
 export const SET_BOOKMARKS = "SET_BOOKMARKS";
 export const SET_TARGET_BOOKMARK = "SET_TARGET_BOOKMARK";
 export const TOGGLE_BOOKMARK_MENU = "TOGGLE_BOOKMARK_MENU";
+export const TOGGLE_BOOKMARK_EDITOR = "TOGGLE_BOOKMARK_EDITOR";
 
 export const ORDER_BY_NAME = "ORDER_BY_NAME";
 export const ORDER_BY_DATE = "ORDER_BY_DATE";
@@ -14,6 +15,7 @@ export interface InitialState {
   bookmarks: ChromeBookmark[];
   targetBookmark: ChromeBookmark;
   bookmarkMenu: BookmarkMenuState;
+  bookmarkEditorShow: boolean;
   searchQuery: string;
   sortOrder: SortOrder;
 }
@@ -46,6 +48,20 @@ export const toggleBookmarksPanel = (
 ): ToggleBookmarksPanelAction => {
   return {
     type: TOGGLE_BOOKMARKS_PANEL,
+    isActive: isActive,
+  };
+};
+
+type ToggleBookmarksEditorAction = {
+  type: "TOGGLE_BOOKMARK_EDITOR";
+  isActive: boolean;
+};
+
+export const toggleBookmarksEditor = (
+  isActive: boolean,
+): ToggleBookmarksEditorAction => {
+  return {
+    type: TOGGLE_BOOKMARK_EDITOR,
     isActive: isActive,
   };
 };
@@ -189,6 +205,8 @@ function getSortOrder(): SortOrder {
 const initialState: InitialState = {
   bookmarksPanelShow: false,
   bookmarks: [],
+  searchQuery: "",
+  sortOrder: getSortOrder(),
   targetBookmark: {
     parentId: "",
     title: "",
@@ -197,18 +215,18 @@ const initialState: InitialState = {
     dateAdded: Date.now(),
   },
   bookmarkMenu: {
-    isActive: true,
+    isActive: false,
     x: 0,
     y: 0,
     containerHeight: 0,
     containerTop: 0,
   },
-  searchQuery: "",
-  sortOrder: getSortOrder(),
+  bookmarkEditorShow: false,
 };
 
 type Action =
   | ToggleBookmarksPanelAction
+  | ToggleBookmarksEditorAction
   | ToggleBookmarksMenuAction
   | OrderByNameAscAction
   | OrderByNameDescAction
@@ -227,6 +245,13 @@ export function bookmarksApp(
       return {
         ...state,
         bookmarksPanelShow: action.isActive,
+      };
+    }
+
+    case TOGGLE_BOOKMARK_EDITOR: {
+      return {
+        ...state,
+        bookmarkEditorShow: action.isActive,
       };
     }
 

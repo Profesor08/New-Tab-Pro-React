@@ -15,14 +15,17 @@ const initialState: AddSiteFormState = {
   show: false,
 };
 
-export const toggleShow = (show: boolean) => {
+export const toggleShow = (show: boolean): ToggleAddSiteForm => {
   return {
     type: TOGGLE_ADD_SITE_FORM,
     show: show,
   };
 };
 
-export function addSiteForm(state = initialState, action: AddSiteFormAction) {
+export function addSiteForm(
+  state: AddSiteFormState = initialState,
+  action: AddSiteFormAction,
+) {
   switch (action.type) {
     case TOGGLE_ADD_SITE_FORM:
       return Object.assign({}, state, {

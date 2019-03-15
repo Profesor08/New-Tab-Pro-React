@@ -29,8 +29,10 @@
 
   max-width: 1000px;
 
+  // will-change: transform;
   transform-style: preserve-3d;
   perspective: 1000px;
+  // transition: linear transform 0.15s;
 }
 
 .site-button {
@@ -46,10 +48,11 @@
   &:hover {
     cursor: pointer;
     background-color: var(--site-hover-background-color);
+    transform: perspective(900px) translateZ(30px);
 
-    .image {
-      transform: perspective(1000px) translate(-50%, -50%) translateZ(200px);
-    }
+    // .image {
+    //   transform: perspective(900px) translate(-50%, -50%) translateZ(200px);
+    // }
 
     .name {
       color: var(--site-hover-name-color);

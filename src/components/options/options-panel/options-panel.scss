@@ -34,7 +34,7 @@
   transform: translate(-100%, 0);
   z-index: 9999;
   opacity: 0;
-  transition: ease opacity .3s, ease transform .3s;
+  transition: ease opacity 0.3s, ease transform 0.3s;
 
   background-color: var(--options-panel-background);
   border: 2px solid var(--options-panel-border-color);
@@ -45,7 +45,7 @@
   display: flex;
   flex-direction: column;
 
-  .close-button {
+  .options-close-button {
     width: 20px;
     height: 20px;
     color: grey;
@@ -74,7 +74,7 @@
     align-items: center;
     padding: 2px 5px;
     border-top: 1px solid #434343;
-    font-size: .8rem;
+    font-size: 0.8rem;
     background-color: transparent;
     transition: ease background-color var(--animation-speed);
     white-space: nowrap;

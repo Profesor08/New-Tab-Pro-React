@@ -35,16 +35,27 @@ class VoiceSearch extends Component<VoiceSearchProps, VoiceSearchState> {
         );
       });
 
+      this.speechRecognition.addEventListener("start", () => {
+        this.setState({
+          recording: true,
+        });
+      });
+
       this.speechRecognition.addEventListener("end", () => {
         this.setState({
           recording: false,
         });
       });
 
-      this.speechRecognition.addEventListener("error", event => {
-        console.warn("%cERROR: " + event.error, "color: #FF0000;");
-        console.warn(event);
-      });
+      this.speechRecognition.addEventListener(
+        "error",
+        (event: SpeechRecognitionError) => {
+          if (event.error !== "no-speech") {
+            console.warn("%cERROR: " + event.error, "color: #FF0000;");
+            console.warn(event);
+          }
+        },
+      );
     } catch (err) {
       console.warn("SpeechRecognition is not supported by browser.");
 
@@ -53,17 +64,9 @@ class VoiceSearch extends Component<VoiceSearchProps, VoiceSearchState> {
   };
 
   toggleVoiceListening = () => {
-    if (this.speechRecognitionIsSupported) {
-      this.setState({
-        recording: !this.state.recording,
-      });
-    }
-  };
-
-  componentDidUpdate() {
     if (this.speechRecognitionIsSupported && this.speechRecognition) {
       try {
-        if (this.state.recording) {
+        if (this.state.recording === false) {
           this.speechRecognition.start();
         } else {
           this.speechRecognition.stop();
@@ -72,7 +75,7 @@ class VoiceSearch extends Component<VoiceSearchProps, VoiceSearchState> {
         console.warn(err.message);
       }
     }
-  }
+  };
 
   render() {
     let recording = this.state.recording ? style.recording : "";

@@ -29,17 +29,22 @@ type ActionButtonProps = {
   children?: ReactNode;
   isActive?: boolean;
   style?: React.CSSProperties;
+  disabled?: any;
   onClick?: () => void;
 };
 
 export class ActionButton extends Component<ActionButtonProps> {
   render() {
-    let { children, isActive, onClick, style } = this.props;
+    let { children, isActive, onClick, style, disabled } = this.props;
 
     let className = "action-button";
 
     if (isActive) {
       className += " is-active";
+    }
+
+    if (disabled !== undefined) {
+      className += " is-disabled";
     }
 
     return (

@@ -21,7 +21,7 @@
   border: 0;
   background: transparent;
   outline: none;
-  transition: ease background-color .1s;
+  transition: ease background-color 0.1s;
 
   &:hover {
     background: #e0e0e0;
@@ -30,6 +30,11 @@
 
   &.is-active {
     background: #e0ebfd;
+  }
+
+  &.is-disabled {
+    color: darken(#e0e0e0, 10%);
+    pointer-events: none;
   }
 }
 

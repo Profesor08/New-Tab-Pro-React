@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import "./close-button.scss";
 
 export const CloseButton = ({
@@ -7,7 +7,7 @@ export const CloseButton = ({
   className,
 }: {
   children?: React.ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
   className?: string;
 }) => {
   let buttonClass = "close-button";

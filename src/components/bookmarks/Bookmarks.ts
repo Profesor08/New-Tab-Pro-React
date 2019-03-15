@@ -2,11 +2,18 @@ interface Chrome {
   bookmarks: ChromeBookmarks;
 }
 
+interface ChromeBookmarkPartial {
+  title?: string;
+  url?: string;
+}
+
 interface ChromeBookmarks {
   onCreated: ChromeBookmarksEvent;
   onRemoved: ChromeBookmarksEvent;
+  onChanged: ChromeBookmarksEvent;
   create: (bookmark: ChromeBookmark) => void;
   remove: (id: string) => void;
+  update: (id: string, changes: ChromeBookmarkPartial) => void;
   getTree: (callback: Function) => void;
 }
 
@@ -34,10 +41,12 @@ declare var localStorage: Storage;
 export class Bookmarks {
   _onCreatedCallbacks: Function[];
   _onRemovedCallbacks: Function[];
+  _onChangedCallbacks: Function[];
 
   constructor() {
     this._onCreatedCallbacks = [];
     this._onRemovedCallbacks = [];
+    this._onChangedCallbacks = [];
 
     if (this._hasAccess()) {
       chrome.bookmarks.onCreated.addListener(async () => {
@@ -46,6 +55,10 @@ export class Bookmarks {
 
       chrome.bookmarks.onRemoved.addListener(async () => {
         await this._onRemoved();
+      });
+
+      chrome.bookmarks.onChanged.addListener(async () => {
+        await this._onChanged();
       });
     }
   }
@@ -132,6 +145,14 @@ export class Bookmarks {
     });
   }
 
+  async _onChanged() {
+    this._updateLocalStorage(await this.get());
+
+    this._onChangedCallbacks.forEach(callback => {
+      callback();
+    });
+  }
+
   async restore() {
     let bookmark = this._popDeletedBookmark();
 
@@ -183,6 +204,29 @@ export class Bookmarks {
     this._pushDeletedBookmark(bookmark);
   }
 
+  async update(bookmark: ChromeBookmark) {
+    if (this._hasAccess()) {
+      chrome.bookmarks.update(bookmark.id, {
+        title: bookmark.title,
+        url: bookmark.url,
+      });
+    } else {
+      const bookmarks = await this.get();
+
+      this._updateLocalStorage(
+        bookmarks.map(b => {
+          if (bookmark.id === b.id) {
+            return bookmark;
+          }
+
+          return b;
+        }),
+      );
+
+      await this._onChanged();
+    }
+  }
+
   async get(): Promise<ChromeBookmark[]> {
     return new Promise(resolve => {
       if (this._hasAccess()) {
@@ -215,5 +259,9 @@ export class Bookmarks {
 
   onRemoved(callback: () => void) {
     this._onRemovedCallbacks.push(callback);
+  }
+
+  onChanged(callback: () => void) {
+    this._onChangedCallbacks.push(callback);
   }
 }

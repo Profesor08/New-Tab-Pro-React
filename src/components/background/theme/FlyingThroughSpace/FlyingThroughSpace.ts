@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import starSpectralColors from "./starSpectralColors";
 import textures from "./images";
 import { vertexShader, fragmentShader } from "./shaders";
+import starSpectralColors from "./starSpectralColors";
 
 function rand(min: number, max: number): number {
   return Math.random() * (max - min) + min;
@@ -10,45 +10,77 @@ function rand(min: number, max: number): number {
 class FlyingThroughSpace {
   _background: THREE.Color;
   _paused: boolean;
+  _isAnimating: boolean;
+  _width: number;
+  _height: number;
+  _uniforms: {
+    texture1: { value: THREE.Texture };
+    texture2: { value: THREE.Texture };
+    texture3: { value: THREE.Texture };
+    texture4: { value: THREE.Texture };
+    time: {
+      type: string;
+      value: number;
+    };
+    width: {
+      type: string;
+      value: number;
+    };
+    height: {
+      type: string;
+      value: number;
+    };
+  };
+  _lastTime: number;
+  _time: number;
+  _distancePerSecond: number;
+  _particles: number;
+  _zMin: number;
+  _zMax: number;
+  _camera: THREE.PerspectiveCamera;
+  _renderer: THREE.WebGLRenderer;
+  _scene: THREE.Scene;
 
   constructor(canvas: HTMLCanvasElement) {
     this._background = new THREE.Color(1 / 256, 1 / 256, 24 / 256);
     this._paused = false;
+    this._isAnimating = false;
+    this._time = 0.0;
+    this._lastTime = Date.now();
+    this._distancePerSecond = 200;
+    this._width = window.innerWidth;
+    this._height = window.innerHeight;
+    this._particles = 10000;
+    this._zMin = -2;
+    this._zMax = 0;
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    // let camera = new THREE.PerspectiveCamera(45, this._width / this._height, 1, 10000);
+    this._camera = new THREE.PerspectiveCamera(45, 1, 1, 10000);
+    this._camera.position.set(0, 0, 0);
 
-    let particles = 6000;
-    let zMin = -2000;
-    let zMax = 0;
-    let time = Date.now() + 1.0;
+    this._scene = new THREE.Scene();
 
-    let camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
-    camera.position.set(0, 0, 0);
-
-    let scene = new THREE.Scene();
-
-    let uniforms = {
+    this._uniforms = {
       texture1: { value: textures.texture1 },
       texture2: { value: textures.texture2 },
       texture3: { value: textures.texture3 },
       texture4: { value: textures.texture4 },
       time: {
         type: "f",
-        value: time,
+        value: this._time,
       },
       width: {
         type: "f",
-        value: width,
+        value: this._width,
       },
       height: {
         type: "f",
-        value: height,
+        value: this._height,
       },
     };
 
     let shaderMaterial = new THREE.ShaderMaterial({
-      uniforms: uniforms,
+      uniforms: this._uniforms,
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
       blending: THREE.AdditiveBlending,
@@ -59,13 +91,13 @@ class FlyingThroughSpace {
 
     let geometry = new THREE.BufferGeometry();
     let positions: number[] = [];
-    let colors = [];
-    let sizes = [];
+    let colors: number[] = [];
+    let sizes: number[] = [];
 
-    for (let i = 0; i < particles; i++) {
+    for (let i = 0; i < this._particles; i++) {
       positions.push(rand(-1, 1));
       positions.push(rand(-1, 1));
-      positions.push(rand(zMin, zMax));
+      positions.push(rand(this._zMin, this._zMax));
       sizes.push(32);
 
       let spectralColor = starSpectralColors[i % 512];
@@ -79,7 +111,9 @@ class FlyingThroughSpace {
       "position",
       new THREE.Float32BufferAttribute(positions, 3),
     );
+
     geometry.addAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+
     geometry.addAttribute(
       "size",
       new THREE.Float32BufferAttribute(sizes, 1).setDynamic(true),
@@ -87,74 +121,70 @@ class FlyingThroughSpace {
 
     let particleSystem = new THREE.Points(geometry, shaderMaterial);
 
-    scene.add(particleSystem);
+    this._scene.add(particleSystem);
 
-    let renderer = new THREE.WebGLRenderer({
+    this._renderer = new THREE.WebGLRenderer({
       canvas: canvas,
       antialias: true,
     });
 
-    renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
-    renderer.setSize(width, height);
-    renderer.setClearColor(this._background, 1);
+    this._renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
+    this._renderer.setSize(this._width, this._height);
+    this._renderer.setClearColor(this._background, 1);
 
-    function animate() {
-      requestAnimationFrame(animate);
-      render();
+    window.addEventListener("resize", this._resize);
+
+    THREE.DefaultLoadingManager.onLoad = () => {
+      this._render();
+    };
+  }
+
+  _animate = () => {
+    if (this._isAnimating) {
+      requestAnimationFrame(this._animate);
+      this._render();
     }
+  };
 
-    function render() {
-      for (let i = 0; i < geometry.attributes.position.count; i++) {
-        let newPosition = positions[i * 3 + 2] + 1;
+  _resize = () => {
+    this._width = window.innerWidth;
+    this._height = window.innerHeight;
 
-        if (newPosition > zMax) {
-          newPosition = zMin;
-        }
+    this._uniforms.width.value = this._width;
+    this._uniforms.height.value = this._height;
 
-        positions[i * 3 + 2] = newPosition;
-      }
+    // camera.aspect = width / height;
+    // camera.updateProjectionMatrix();
 
-      geometry.attributes.position = new THREE.Float32BufferAttribute(
-        positions,
-        3,
-      );
+    this._renderer.setSize(this._width, this._height);
+  };
 
-      time++;
+  _render = () => {
+    const now = Date.now();
+    const dt = now - this._lastTime;
+    this._lastTime = now;
 
-      uniforms.time.value = time;
+    this._time += this._distancePerSecond * (dt / 1000);
 
-      renderer.render(scene, camera);
+    this._uniforms.time.value = this._time;
+
+    this._renderer.render(this._scene, this._camera);
+  };
+
+  start = () => {
+    if (this._isAnimating === false) {
+      this._isAnimating = true;
+      this._animate();
     }
+  };
 
-    window.addEventListener("resize", function() {
-      width = window.innerWidth;
-      height = window.innerHeight;
+  stop = () => {
+    this._isAnimating = false;
+  };
 
-      uniforms.width.value = width;
-      uniforms.height.value = height;
-
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-
-      renderer.setSize(width, height);
-    });
-
-    animate();
-  }
-
-  start() {}
-
-  stop() {}
-
-  setState(paused: boolean) {}
-
-  get background() {
-    return this._background;
-  }
-
-  set background(color: THREE.Color) {
-    this._background = color;
-  }
+  render = () => {
+    this._render();
+  };
 }
 
 export default FlyingThroughSpace;

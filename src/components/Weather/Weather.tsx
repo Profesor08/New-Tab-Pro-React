@@ -1,8 +1,11 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import "./weather.scss";
 import { cache } from "../../lib/cache";
 import icons from "./icons";
 import Icon from "./Icon";
+import { OptionsAppInitialState } from "../../store/reducers/optionsApp";
 
 const openWeatherMapAPI = `6a3811c0c201a60032a60c243e832cf1`;
 
@@ -64,14 +67,16 @@ interface WeatherMainInfo {
   temp_min: number;
 }
 
-interface State {
-  position: GeoPosition;
-  weather: WeatherInfo;
-  forecast: WeatherForecast;
+interface WeatherState {
+  position?: GeoPosition;
+  weather?: WeatherInfo;
+  forecast?: WeatherForecast;
   loaded: boolean;
 }
 
-interface Props {}
+interface WeatherProps {
+  showWeatherWidget: boolean;
+}
 
 async function getJson(url: string, params: UrlParams = {}) {
   const query = Object.keys(params)
@@ -160,16 +165,20 @@ function getWeatherIcon(icon: string) {
   }
 }
 
-class Weather extends Component<Props, State> {
+class Weather extends Component<WeatherProps, WeatherState> {
   icon: React.RefObject<HTMLElement>;
 
-  constructor(props: Props) {
+  constructor(props: WeatherProps) {
     super(props);
 
     this.icon = React.createRef();
+
+    this.state = {
+      loaded: false,
+    };
   }
 
-  componentDidMount = async () => {
+  init = async () => {
     let position = await cache("geoPosition", async () => {
       return await getGeoPosition();
     });
@@ -186,8 +195,31 @@ class Weather extends Component<Props, State> {
     });
   };
 
+  componentDidMount = async () => {
+    if (this.props.showWeatherWidget === true) {
+      await this.init();
+    }
+  };
+
+  componentWillReceiveProps = async (nextProps: WeatherProps) => {
+    if (nextProps.showWeatherWidget === true) {
+      if (this.state.loaded === false) {
+        await this.init();
+      }
+    }
+  };
+
   render() {
-    if (this.state && this.state.loaded) {
+    if (this.props.showWeatherWidget === false) {
+      return null;
+    }
+
+    if (
+      this.state.loaded &&
+      this.state.forecast &&
+      this.state.weather &&
+      this.state.position
+    ) {
       let forecast = this.state.forecast.list
 
         .filter((weather: WeatherForecastItem) => {
@@ -229,7 +261,7 @@ class Weather extends Component<Props, State> {
                   {this.state.weather.weather[0].description}
                 </div>
                 <div className="temperature">
-                  {this.state.weather.main.temp}°
+                  {Math.floor(this.state.weather.main.temp)}°
                 </div>
               </div>
             </div>
@@ -257,4 +289,21 @@ class Weather extends Component<Props, State> {
   }
 }
 
-export default Weather;
+interface State {
+  optionsApp: OptionsAppInitialState;
+}
+
+const mapStateProps = (state: State): WeatherProps => {
+  return {
+    showWeatherWidget: state.optionsApp.showWeatherWidget,
+  };
+};
+
+const mapDispatchProps = (dispatch: Dispatch) => {
+  return {};
+};
+
+export default connect(
+  mapStateProps,
+  mapDispatchProps,
+)(Weather);

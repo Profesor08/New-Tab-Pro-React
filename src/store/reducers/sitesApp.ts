@@ -2,11 +2,9 @@ import { sites } from "../demo/sites";
 
 export const ADD_SITE = "ADD_SITE";
 export const REMOVE_SITE = "REMOVE_SITE";
-export const TOGGLE_SITES = "TOGGLE_SITES";
 
 export interface SitesAppInitialState {
   sites: Site[];
-  isActive: boolean;
 }
 
 export interface Site {
@@ -25,12 +23,7 @@ interface RemoveSiteAction {
   index: number;
 }
 
-interface ToggleSitesAction {
-  type: "TOGGLE_SITES";
-  isActive: boolean;
-}
-
-type SitesAppAction = AddSiteAction | RemoveSiteAction | ToggleSitesAction;
+type SitesAppAction = AddSiteAction | RemoveSiteAction;
 
 export const addSite = (site: Site): AddSiteAction => {
   return {
@@ -46,16 +39,8 @@ export const removeSite = (index: number): RemoveSiteAction => {
   };
 };
 
-export const toggleSites = (isActive: boolean): ToggleSitesAction => {
-  return {
-    type: TOGGLE_SITES,
-    isActive,
-  };
-};
-
 const initialState: SitesAppInitialState = {
   sites: [],
-  isActive: true,
 };
 
 try {
@@ -66,7 +51,7 @@ try {
   } else {
     initialState.sites = sites;
   }
-} catch (err) {
+} catch {
   initialState.sites = sites;
 }
 

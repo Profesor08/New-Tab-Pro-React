@@ -6,6 +6,7 @@ import BookmarkPanelHeader from "./BookmarkPanelHeader";
 import Bookmark from "./Bookmark";
 import { Bookmarks, ChromeBookmark } from "./Bookmarks";
 import BookmarkMenu from "./BookmarkMenu";
+import BookmarkEditor from "./BookmarkEditor";
 import {
   ORDER_BY_DATE,
   ORDER_BY_NAME,
@@ -133,6 +134,7 @@ class BookmarksPanel extends Component<Props, State> {
         <div className="panel-body">
           <div className="bookmarks-container">
             <BookmarkMenu />
+            <BookmarkEditor />
             {this.filter(this.props.bookmarks).map(
               (bookmark: ChromeBookmark, index: number) => (
                 <Bookmark

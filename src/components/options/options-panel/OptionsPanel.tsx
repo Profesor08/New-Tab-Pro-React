@@ -6,21 +6,26 @@ import OptionsPanelButton from "./OptionsPanelButton";
 import {
   toggleAdditionalOptions,
   toggleBackgroundStarSpace,
+  toggleWeatherWidget,
+  toggleCurrencyWidget,
+  toggleWebSites,
   OptionsAppInitialState,
 } from "../../../store/reducers/optionsApp";
 
 interface OprionsPanelDispatchProps {
   toggleAdditionalOptions: (isActive: boolean) => void;
   toggleBackgroundStarSpace: (isActive: boolean) => void;
-}
-
-interface OptionsPanelState {
-  optionsApp: OptionsAppInitialState;
+  toggleWebSites: (isActive: boolean) => void;
+  toggleWeatherWidget: (isActive: boolean) => void;
+  toggleCurrencyWidget: (isActive: boolean) => void;
 }
 
 interface OptionsPanelStateProps {
   additionalOptions: boolean;
-  backgroundStarSpace: boolean;
+  backgroundStarSpaceAnimation: boolean;
+  showWebSites: boolean;
+  showWeatherWidget: boolean;
+  showCurrencyWidget: boolean;
 }
 
 interface OptionsPanelProps {
@@ -44,15 +49,39 @@ class OptionsPanel extends Component<Props, OptionsPanelStateProps> {
       <div className={className}>
         <div className="options-back" onClick={this.props.onClose} />
         <div className="options-panel">
-          <div className="close-button" onClick={this.props.onClose}>
+          <div className="options-close-button" onClick={this.props.onClose}>
             ×
           </div>
           <div className="options-buttons">
             <OptionsPanelButton
-              active={this.props.backgroundStarSpace}
+              active={this.props.showWeatherWidget}
+              onChange={() =>
+                this.props.toggleWeatherWidget(!this.props.showWeatherWidget)
+              }
+            >
+              Show weather
+            </OptionsPanelButton>
+            <OptionsPanelButton
+              active={this.props.showCurrencyWidget}
+              onChange={() =>
+                this.props.toggleCurrencyWidget(!this.props.showCurrencyWidget)
+              }
+            >
+              Show currency
+            </OptionsPanelButton>
+            <OptionsPanelButton
+              active={this.props.showWebSites}
+              onChange={() =>
+                this.props.toggleWebSites(!this.props.showWebSites)
+              }
+            >
+              Show sites
+            </OptionsPanelButton>
+            <OptionsPanelButton
+              active={this.props.backgroundStarSpaceAnimation}
               onChange={() =>
                 this.props.toggleBackgroundStarSpace(
-                  !this.props.backgroundStarSpace,
+                  !this.props.backgroundStarSpaceAnimation,
                 )
               }
             >
@@ -75,21 +104,40 @@ class OptionsPanel extends Component<Props, OptionsPanelStateProps> {
   }
 }
 
+interface OptionsPanelState {
+  optionsApp: OptionsAppInitialState;
+}
+
 const mapStateToProps = (state: OptionsPanelState): OptionsPanelStateProps => {
   return {
     additionalOptions: state.optionsApp.additionalOptions,
-    backgroundStarSpace: state.optionsApp.backgroundStarSpace,
+    backgroundStarSpaceAnimation: state.optionsApp.backgroundStarSpaceAnimation,
+    showWebSites: state.optionsApp.showWebSites,
+    showWeatherWidget: state.optionsApp.showWeatherWidget,
+    showCurrencyWidget: state.optionsApp.showCurrencyWidget,
   };
 };
 
-const mapDispatchProps = (dispatch: Dispatch) => {
+const mapDispatchProps = (dispatch: Dispatch): OprionsPanelDispatchProps => {
   return {
-    toggleAdditionalOptions: (isActive: boolean) => {
+    toggleAdditionalOptions: (isActive: boolean): void => {
       dispatch(toggleAdditionalOptions(isActive));
     },
 
-    toggleBackgroundStarSpace: (isActive: boolean) => {
+    toggleBackgroundStarSpace: (isActive: boolean): void => {
       dispatch(toggleBackgroundStarSpace(isActive));
+    },
+
+    toggleWebSites: (isActive: boolean): void => {
+      dispatch(toggleWebSites(isActive));
+    },
+
+    toggleWeatherWidget: (isActive: boolean): void => {
+      dispatch(toggleWeatherWidget(isActive));
+    },
+
+    toggleCurrencyWidget: (isActive: boolean): void => {
+      dispatch(toggleCurrencyWidget(isActive));
     },
   };
 };

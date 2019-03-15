@@ -4,12 +4,17 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { ActionButton, ActionMenu, ActionSeparator } from "./ActionMenu";
 import { Bookmarks, ChromeBookmark } from "./Bookmarks";
-import { setBookmarks, InitialState } from "../../store/reducers/bookmarksApp";
+import {
+  setBookmarks,
+  InitialState,
+  toggleBookmarksEditor,
+} from "../../store/reducers/bookmarksApp";
 
 const bookmarks = new Bookmarks();
 
 interface DispatchProps {
   setBookmarks: (bookmarks: ChromeBookmark[]) => void;
+  openBookmarkEditor: () => void;
 }
 
 interface StateProps {
@@ -72,6 +77,17 @@ class BookmarkMenu extends Component<Props> {
     );
   };
 
+  copyBookmarkUrl = () => {
+    const fake = document.createElement("textarea");
+    fake.style.position = "absolute";
+    fake.style.left = "-99999px";
+    fake.value = this.props.bookmark.url;
+    document.body.appendChild(fake);
+    fake.select();
+    document.execCommand("copy");
+    document.body.removeChild(fake);
+  };
+
   render() {
     let y = this.props.y;
 
@@ -88,7 +104,7 @@ class BookmarkMenu extends Component<Props> {
     }
 
     const style = {
-      left: this.props.x + "px",
+      // left: this.props.x + "px",
       top: y + "px",
     };
 
@@ -100,8 +116,12 @@ class BookmarkMenu extends Component<Props> {
 
     return (
       <ActionMenu className={className} style={style}>
-        <ActionButton>Edit Bookmark</ActionButton>
-        <ActionButton>Copy Bookmark URL</ActionButton>
+        <ActionButton onClick={this.props.openBookmarkEditor}>
+          Edit Bookmark
+        </ActionButton>
+        <ActionButton onClick={this.copyBookmarkUrl}>
+          Copy Bookmark URL
+        </ActionButton>
         <ActionButton onClick={this.removeBookmark}>
           Delete Bookmark
         </ActionButton>
@@ -131,6 +151,10 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
   return {
     setBookmarks: (bookmarks: ChromeBookmark[]): void => {
       dispatch(setBookmarks(bookmarks));
+    },
+
+    openBookmarkEditor: (): void => {
+      dispatch(toggleBookmarksEditor(true));
     },
   };
 };
