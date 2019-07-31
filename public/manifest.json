@@ -28,7 +28,7 @@
     "http://www.calend.ru/"
   ],
 
-  "version": "3.0.1",
+  "version": "3.2.2",
   "web_accessible_resources": ["index.html"],
 
   "browser_action": {
