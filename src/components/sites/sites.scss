@@ -1,9 +1,5 @@
 .sites-container {
   position: static;
-
-  * {
-    transform: translateZ(0);
-  }
 }
 
 .sites-grid {
@@ -33,6 +29,7 @@
   transform-style: preserve-3d;
   perspective: 1000px;
   // transition: linear transform 0.15s;
+  transform: translateZ(0);
 }
 
 .site-button {
@@ -44,6 +41,7 @@
   transform-origin: 50% 50%;
   transition: ease background-color var(--animation-speed),
     ease transform var(--animation-speed);
+  transform: translateZ(0);
 
   &:hover {
     cursor: pointer;
@@ -99,7 +97,8 @@
     transition: ease transform var(--animation-speed);
   }
 
-  .remove-site {
+  .remove-site,
+  .edit-site {
     position: absolute;
     top: 3px;
     right: 3px;
@@ -112,12 +111,23 @@
     font-size: 20px;
     color: grey;
 
+    &:not(.is-active) {
+      display: none;
+    }
+  }
+
+  .remove-site {
     &:hover {
       color: red;
     }
+  }
 
-    &:not(.is-active) {
-      display: none;
+  .edit-site {
+    right: 20px;
+    font-size: 14px;
+
+    &:hover {
+      color: green;
     }
   }
 }

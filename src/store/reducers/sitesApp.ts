@@ -2,6 +2,7 @@ import { sites } from "../demo/sites";
 
 export const ADD_SITE = "ADD_SITE";
 export const REMOVE_SITE = "REMOVE_SITE";
+export const UPDATE_SITE = "UPDATE_SITE";
 
 export interface SitesAppInitialState {
   sites: Site[];
@@ -23,7 +24,13 @@ interface RemoveSiteAction {
   index: number;
 }
 
-type SitesAppAction = AddSiteAction | RemoveSiteAction;
+interface UpdateSiteAction {
+  type: "UPDATE_SITE";
+  index: number;
+  site: Site;
+}
+
+type SitesAppAction = AddSiteAction | RemoveSiteAction | UpdateSiteAction;
 
 export const addSite = (site: Site): AddSiteAction => {
   return {
@@ -36,6 +43,14 @@ export const removeSite = (index: number): RemoveSiteAction => {
   return {
     type: REMOVE_SITE,
     index,
+  };
+};
+
+export const updateSite = (index: number, site: Site): UpdateSiteAction => {
+  return {
+    type: UPDATE_SITE,
+    index,
+    site,
   };
 };
 
@@ -74,6 +89,20 @@ export function sitesApp(
       let sites = [...state.sites];
 
       sites.splice(action.index, 1);
+
+      localStorage.setItem("webSites", JSON.stringify(sites));
+
+      return Object.assign({}, state, {
+        sites,
+      });
+    }
+
+    case UPDATE_SITE: {
+      let sites = [...state.sites];
+
+      if (sites[action.index]) {
+        sites[action.index] = action.site;
+      }
 
       localStorage.setItem("webSites", JSON.stringify(sites));
 

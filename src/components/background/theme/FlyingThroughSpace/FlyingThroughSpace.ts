@@ -1,4 +1,5 @@
 import * as THREE from "three";
+const OrbitControls = require("three-orbit-controls")(THREE);
 import textures from "./images";
 import { vertexShader, fragmentShader } from "./shaders";
 import starSpectralColors from "./starSpectralColors";
@@ -137,7 +138,11 @@ class FlyingThroughSpace {
     THREE.DefaultLoadingManager.onLoad = () => {
       this._render();
     };
+
+    this._t = 0;
   }
+
+  _t: number;
 
   _animate = () => {
     if (this._isAnimating) {

@@ -5,11 +5,13 @@ import { Dispatch } from "redux";
 import "./sites.scss";
 import {
   removeSite,
+  updateSite,
   Site,
   SitesAppInitialState,
 } from "../../store/reducers/sitesApp";
 import { OptionsAppInitialState } from "../../store/reducers/optionsApp";
 import AddSiteButton from "./AddSiteButton";
+import EditSite from "./EditSite";
 
 function constrain(n: number, low: number, high: number): number {
   return Math.max(Math.min(n, high), low);
@@ -37,6 +39,7 @@ function map(
 
 interface SitesDispatchProps {
   removeSite: (index: number) => void;
+  updateSite: (index: number, site: Site) => void;
 }
 
 interface SitesStateProps {
@@ -52,24 +55,64 @@ interface SitesAppState {
 
 type Props = SitesStateProps & SitesDispatchProps;
 
-class Sites extends Component<Props> {
+interface State {
+  selectedSite: Site | null;
+  selectedSiteIndex: number | null;
+}
+
+class Sites extends Component<Props, State> {
+  constructor(props: Props, state: State) {
+    super(props, state);
+
+    this.state = {
+      selectedSite: null,
+      selectedSiteIndex: null,
+    };
+  }
+
+  editSite = (index: number) => {
+    this.setState({
+      selectedSite: this.props.sites[index],
+      selectedSiteIndex: index,
+    });
+  };
+
   getSitesList = () => {
     let removeButtonClassName = "remove-site";
+    let editButtonIsActive = "";
 
     if (this.props.additionalOptions) {
       removeButtonClassName += " is-active";
+      editButtonIsActive = "is-active";
     }
 
-    return this.props.sites.map((site, index) => {
+    let style = "";
+
+    const sites = this.props.sites.map((site, index) => {
+      style += `
+      .site-button .image.site-image-${index} {
+        background-image: url(${site.image});
+      }
+      `;
+
       return (
         <div key={index} className="site-button">
           <div className="name">{site.name}</div>
           <a className="link" href={site.url}>
             <div
-              className="image"
-              style={{ backgroundImage: `url(${site.image})` }}
+              className={`image site-image-${index}`}
+              //style={{ backgroundImage: `url(${site.image})` }}
             />
           </a>
+          <div
+            className={`edit-site ` + editButtonIsActive}
+            onClick={e => {
+              e.preventDefault();
+              this.editSite(index);
+            }}
+          >
+            ✎
+          </div>
           <div
             className={removeButtonClassName}
             onClick={e => this.props.removeSite(index)}
@@ -79,6 +122,11 @@ class Sites extends Component<Props> {
         </div>
       );
     });
+
+    return {
+      sitesStyle: style,
+      sites,
+    };
   };
 
   componentDidMount = () => {
@@ -170,10 +218,32 @@ class Sites extends Component<Props> {
       return null;
     }
 
+    const { sitesStyle, sites } = this.getSitesList();
+
     return (
       <div className="sites-container">
+        <style>{sitesStyle}</style>
+        <EditSite
+          site={this.state.selectedSite}
+          submit={(site: Site) => {
+            if (this.state.selectedSiteIndex !== null) {
+              this.props.updateSite(this.state.selectedSiteIndex, site);
+            }
+
+            this.setState({
+              selectedSite: null,
+              selectedSiteIndex: null,
+            });
+          }}
+          close={() => {
+            this.setState({
+              selectedSite: null,
+              selectedSiteIndex: null,
+            });
+          }}
+        />
         <div className="sites-grid">
-          {this.getSitesList()}
+          {sites}
           <AddSiteButton />
         </div>
       </div>
@@ -193,6 +263,10 @@ const mapDispatchToProps = (dispatch: Dispatch): SitesDispatchProps => {
   return {
     removeSite: (index: number) => {
       dispatch(removeSite(index));
+    },
+
+    updateSite: (index: number, site: Site) => {
+      dispatch(updateSite(index, site));
     },
   };
 };

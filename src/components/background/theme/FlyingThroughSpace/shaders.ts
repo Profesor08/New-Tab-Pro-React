@@ -14,15 +14,9 @@ float map(float value, float inMin, float inMax, float outMin, float outMax) {
   return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
 }
 
-float mod123(float value, float mod) {
-	return value - floor(value / mod) * mod;
-}
-
 void main() {
 	vColor = color;
 	vec4 mvPosition = vec4(position, 1.0);
-
-	//mvPosition.z = mvPosition.z * 2000.0;
 
 	float inc = mod(time, 2000.0);
 	float scatter = 2000.0;
@@ -40,14 +34,14 @@ void main() {
 	mvPosition.z = newPosition;
 	
 	vOpacity = 1.0 * map(
-	  clamp(mvPosition.z, -2000.0, -1900.0), -2000.0, -1900.0, 0.0, 1.0
+	  clamp(mvPosition.z, -2000.0, -1500.0), -2000.0, -1500.0, 0.0, 1.0
 	);
 
 	vWidth = width;
 	vHeight = height;
 	
 	mvPosition.x *= width;
-	mvPosition.y *= height;
+  mvPosition.y *= height;
 
 	if (abs(mvPosition.x) > width) {
 		vOpacity = 0.0;
@@ -55,10 +49,14 @@ void main() {
 
 	if (abs(mvPosition.y) > height) {
 		vOpacity = 0.0;
-	}
+  }
+  
+  mat4 matrix = projectionMatrix;
+
+  //matrix[2][3] = newPosition/10.;
 	
 	gl_PointSize = size * (1000.0 / -mvPosition.z);
-	gl_Position = projectionMatrix * mvPosition;
+	gl_Position = matrix * mvPosition;
 }
 
 `;
