@@ -18,7 +18,7 @@
     "react-redux": "^6.0.1",
     "react-scripts": "2.1.5",
     "redux": "^4.0.4",
-    "three": "^0.101.1",
+    "three": "^0.125.0",
     "three-orbit-controls": "^82.1.0",
     "typesafe-actions": "^3.4.0",
     "typescript": "^3.5.3"
